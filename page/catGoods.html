@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>查看维修单</title>
+    <script src="../lib/layui/layui.js"></script>
+    <script src="../lib/jquery-3.5.1.min.js"></script>
+    <script src="../js/CONFIG.js"></script>
+    <script src="../lib/layer/layer.js"></script>
+
+    <script src="../lib/vue.js"></script>
+
+    <style>
+        @import "../lib/layui/css/layui.css";
+        @import "../lib/layer/theme/default/layer.css";
+    </style>
+</head>
+<body>
+<div id="main" style="padding: 20px">
+    <div class="layui-carousel" id="goodsImg">
+        <div carousel-item>
+            <img v-for="item in imgs" :src="item">
+        </div>
+    </div>
+    <fieldset class="layui-elem-field">
+        <legend>{{goods.name}}</legend>
+        <div class="layui-field-box">
+            <h2 style="color: red">￥{{goods.price}}</h2>
+            <br/>
+            <div>
+                <a v-for="(item,i) in types">
+                    <button v-if="(i+1)%3===0" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm">{{item}}</button>
+                    <button v-if="(i+1)%3===1" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-normal">{{item}}</button>
+                    <button v-if="(i+1)%3===2" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger">{{item}}</button>
+                </a>
+            </div>
+            <br/>
+            <p style="color: #8D8D8D">已售出：{{goods.sell}}</p>
+        </div>
+    </fieldset>
+    <fieldset class="layui-elem-field">
+        <legend>描述</legend>
+        <div class="layui-field-box" v-html="goods.description"></div>
+    </fieldset>
+</div>
+</body>
+<script>
+    function getQueryVariable(variable){
+        let query = window.location.search.substring(1);
+        let vars = query.split("&");
+        for (let i=0;i<vars.length;i++) {
+            let pair = vars[i].split("=");
+            if(pair[0] === variable){return pair[1];}
+        }
+        return false;
+    }
+    let PageApp=new Vue({
+        el:"#main",
+        data:{
+            id:0,
+            goods:{name:'',price:0.00,stock:0,sell:0,enable:true,time:'',description:'',imgs:'',type:''},
+            imgs:[],types:[]
+        },
+        methods:{
+            getImgs:function () {
+                let igs=this.goods.imgs.split(";");
+                let str="";
+            }
+        }
+    })
+    PageApp.id=getQueryVariable("id");
+    debug_(PageApp.token)
+    debug_(PageApp.id)
+    if (PageApp.id===false){
+        alert('非法访问')
+        window.close();
+    }else {
+        post("/admin/goods/con/get/"+PageApp.id,null,{id:PageApp.id},
+        function (data) {
+            if (data.code===0){
+                PageApp.goods=data.data;
+                let igs=data.data.imgs.split(";");
+                let types=data.data.type.split(";");
+                for (let i = 0; i < igs.length; i++) {
+                    if (igs[i]!==''){
+                        PageApp.imgs.push(HOST+"/file/image/"+igs[i])
+                    }
+                }
+                for (let i = 0; i < types.length; i++) {
+                    if (types[i]!==''){
+                        PageApp.types.push(types[i])
+                    }
+                }
+
+                layui.use('carousel',function () {
+                    let carousel=layui.carousel;
+                    carousel.render({
+                        elem:"#goodsImg",
+                        width:"100%",
+
+                    });
+                })
+            }
+        },"正在拉取数据")
+    }
+</script>
+</html>

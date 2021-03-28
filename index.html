@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>BUGer</title>
+    <style>
+        @import "lib/layui/css/layui.css";
+        @import "lib/layer/theme/default/layer.css";
+    </style>
+    <script src="lib/jquery-3.5.1.min.js"></script>
+    <script src="lib/vue.js"></script>
+    <script src="lib/layui/layui.js"></script>
+    <script src="lib/layer/layer.js"></script>
+    <script src="js/start.js"></script>
+    <script src="js/CONFIG.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/goods.js"></script>
+    <script src="js/order.js"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin" id="VUEBox">
+    <div class="layui-header">
+        <div class="layui-logo">BUGER 后端</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+
+
+<!--            <li class="layui-nav-item"><a href="">商品管理</a></li>-->
+<!--            <li class="layui-nav-item"><a href="">用户</a></li>-->
+<!--            <li class="layui-nav-item">-->
+<!--                <a href="javascript:;">其它系统</a>-->
+<!--                <dl class="layui-nav-child">-->
+<!--                    <dd><a href="">邮件管理</a></dd>-->
+<!--                    <dd><a href="">消息管理</a></dd>-->
+<!--                    <dd><a href="">授权管理</a></dd>-->
+<!--                </dl>-->
+<!--            </li>-->
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    {{username}}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a>基本资料</a></dd>
+                    <dd><a>安全设置</a></dd>
+<!--                    <dd><a>退出登录</a></dd>-->
+                </dl>
+            </li>
+            <li onclick="loginOut()" class="layui-nav-item"><a>退出账户</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item left-button"><a>控制台</a></li>
+                <li class="layui-nav-item left-button"><a>管理员管理</a></li>
+                <li class="layui-nav-item left-button"><a>用户管理</a></li>
+                <li class="layui-nav-item left-button"><a>商品管理</a></li>
+                <li class="layui-nav-item left-button"><a>订单管理</a></li>
+                <li class="layui-nav-item left-button"><a>评论管理</a></li>
+                <li class="layui-nav-item left-button"><a>待定</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body" id="home">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+<!--            控制台-->
+            <div class="home">
+                控制台
+            </div>
+<!--            管理员管理-->
+            <div class="home">
+                <table id="adminUserTable" lay-filter="adminUserTable"></table>
+            </div>
+<!--            用户管理-->
+            <div class="home">
+                用户
+            </div>
+<!--            商品管理-->
+            <div class="home">
+                <table id="goodsTable" lay-filter="goodsTable"></table>
+                <!--模板风格框架-->
+                <script type="text/html" id="goodsRightTool">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                    <a class="layui-btn layui-btn-xs" lay-event="cat">预览</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </script>
+            </div>
+<!--            订单管理-->
+            <div class="home">
+                <table id="orderTable" lay-filter="orderTable"></table>
+                <!--模板风格框架-->
+                <script type="text/html" id="orderRightTool">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">修改地址</a>
+                    <a class="layui-btn layui-btn-xs" lay-event="cat">查看</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="close">关闭订单</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除订单</a>
+                </script>
+            </div>
+<!--            评论管理-->
+            <div class="home">
+                评论
+            </div>
+<!--            待定-->
+            <div class="home">
+                待定
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+            登录有效期：
+            <span v-if="tokenTime>60" class="layui-badge layui-bg-green">{{tokenTime}}秒</span>
+            <span v-if="tokenTime<=60" class="layui-badge layui-bg-orange">{{tokenTime}}秒</span>
+    </div>
+</div>
+
+<script type="text/html" id="goodsEnableSwitch">
+    <!-- 这里的 checked 的状态只是演示 -->
+    <input type="checkbox" name="goodsEnableSwitch" value="{{d.id}}" lay-skin="switch" lay-text="上架|下架" lay-filter="goodsEnableSwitch" {{ d.enable ?'checked' : '' }} >
+</script>
+<script>
+    let app;
+    //JavaScript代码区域
+    layui.use('element', function(){
+        // layui的element组件
+        let element = layui.element;
+    });
+    start();
+</script>
+</body>
+</html>
